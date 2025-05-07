@@ -33,6 +33,9 @@ export const ApiConfig = {
   //wishlist
   wishlistedProducts:`${BASE_URL}/wishlist/wishlisted-products`, 
   toggleWishlist:`${BASE_URL}/wishlist/add-to-wishlist`, 
+  mywishlist:`${BASE_URL}/wishlist/my-wishlist`,
+  removeFromWishlist:`${BASE_URL}/wishlist/remove-from-wishlist`,  
+
 
   //cart
   addToCart:`${BASE_URL}/cart`,

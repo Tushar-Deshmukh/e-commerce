@@ -7,16 +7,15 @@
 |
 */
 
-import AuthController from '#controllers/auth_controller'
-import CategoriesController from '#controllers/categories_controller'
-import ProductsController from '#controllers/products_controller'
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
-import UploadController from '#controllers/upload_images_controller'
-// const RatingsController = () => import('#controllers/ratings_controller')
-import RatingsController from '#controllers/ratings_controller'
-import WishlistController from '#controllers/wishlists_controller'
-import CartController from '#controllers/carts_controller'
+const AuthController = () => import('#controllers/auth_controller')
+const CategoriesController = () => import('#controllers/categories_controller')
+const ProductsController = () => import('#controllers/products_controller')
+const UploadController = () => import('#controllers/upload_images_controller')
+const RatingsController = () => import('#controllers/ratings_controller')
+const WishlistController = () => import('#controllers/wishlists_controller')
+const CartController = () => import('#controllers/carts_controller')
 
 router.get('/', async () => {
   return {
@@ -90,7 +89,8 @@ router
 router
   .group(() => {
     router.post('', [CartController, 'add']),
-    router.get("",[CartController,'getCartItems'])
+      router.get('', [CartController, 'getCartItems']),
+      router.delete('/:id', [CartController, 'removeFromCart'])
   })
   .prefix('/cart')
   .middleware([middleware.auth()])

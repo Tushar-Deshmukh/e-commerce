@@ -39,11 +39,11 @@ export default class CartController {
     try {
       const userId = auth.user!.id
       const result = await this.cartService.getCartItems(userId)
-  
+
       return this.responseService.sendResponse(response, result)
     } catch (error) {
       this.responseService.buildLogger('error', error)
-  
+
       return this.responseService.sendResponse(
         response,
         this.responseService.buildFailure('Something went wrong while fetching cart items'),
@@ -51,5 +51,22 @@ export default class CartController {
       )
     }
   }
-  
+
+  public async removeFromCart({ request, response, auth }: HttpContext) {
+    try {
+      const { id } = request.params()
+      const userId = auth.user!.id
+      const result = await this.cartService.removeFromCart(id, userId)
+
+      return this.responseService.sendResponse(response, result)
+    } catch (error) {
+      this.responseService.buildLogger('error', error)
+
+      return this.responseService.sendResponse(
+        response,
+        this.responseService.buildFailure('Something went wrong while deleting cart item'),
+        { overrideHttpCode: 500 }
+      )
+    }
+  }
 }

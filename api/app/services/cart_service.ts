@@ -57,5 +57,25 @@ export default class CartService {
       return this.responseService.buildFailure('Failed to fetch cart items')
     }
   }
+
+  public async removeFromCart(cartItemId: number, userId: number): Promise<ApiResponse> {
+    try {
+      const cartItem = await Cart.query()
+        .where('id', cartItemId)
+        .andWhere('user_id', userId)
+        .first()
+  
+      if (!cartItem) {
+        return this.responseService.buildFailure('Cart item not found or does not belong to the user')
+      }
+  
+      await cartItem.delete()
+  
+      return this.responseService.buildSuccess('Item removed from cart successfully')
+    } catch (error) {
+      this.responseService.buildLogger('error', error)
+      return this.responseService.buildFailure('Something went wrong while removing item from cart')
+    }
+  }
   
 }

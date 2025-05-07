@@ -7,6 +7,7 @@ import { MultipartFile } from '@adonisjs/core/bodyparser'
 import CloudinaryService from './cloudinary_service.js'
 import { ListCriteria } from '../types/product_interface.js'
 import { ApiResponse } from '../types/response_interface.js'
+import { ModelQueryBuilderContract } from '@adonisjs/lucid/types/model'
 
 @inject()
 export default class ProductService {
@@ -15,67 +16,59 @@ export default class ProductService {
     private cloudinaryService: CloudinaryService
   ) {}
 
-  async masterList(criteria: ListCriteria): Promise<ApiResponse> {
-    try {
-      let query = Product.query()
-
-      // Apply price range filter
-      const minPrice = criteria.minPrice || 100
-      const maxPrice = criteria.maxPrice || 5000
-      query.whereBetween('price', [minPrice, maxPrice])
-
-      //Filter by average_rating if provided
-      if (criteria.averageRating) {
-        query.where('average_rating', '>=', criteria.averageRating)
-      }
-
-      //Filter by category slug if provided
-      if (criteria.categorySlug) {
-        query.whereHas('category', (categoryQuery) => {
-          categoryQuery.where('slug', criteria.categorySlug || '')
-        })
-      }
-
-      // Apply sorting
-      switch (criteria.sortBy) {
-        case 'price_low_to_high':
-          query.orderBy('price', 'asc')
-          break
-        case 'price_high_to_low':
-          query.orderBy('price', 'desc')
-          break
-        case 'rating':
-          query.orderBy('average_rating', 'desc')
-          break
-        case 'newest_first':
-        default:
-          query.orderBy('created_at', 'desc')
-          break
-      }
-
-      return this.responseService.buildSuccess('Products master list fetched successfully.', query)
-    } catch (error) {
-      this.responseService.buildLogger('error', error)
-      return this.responseService.buildFailure(
-        'Something went wrong while fetching products, please try again later.'
-      )
+  public masterList(criteria: ListCriteria): ModelQueryBuilderContract<typeof Product> {
+    const query = Product.query()
+  
+    // Apply price range filter (accept 0 price products)
+    const minPrice = criteria.minPrice ?? 100
+    const maxPrice = criteria.maxPrice ?? 5000
+    query.whereBetween('price', [minPrice, maxPrice])
+  
+    // Filter by average_rating, allow 0 to include unrated products
+    if (criteria.averageRating !== undefined) {
+      query.where((ratingQuery) => {
+        ratingQuery
+          .where('average_rating', '>=', criteria.averageRating!)
+          .orWhere('average_rating', '=', 0)
+      })
     }
+  
+    // Filter by category slug
+    if (criteria.categorySlug) {
+      query.whereHas('category', (categoryQuery) => {
+        categoryQuery.where('slug', criteria.categorySlug!)
+      })
+    }
+  
+    // Sorting
+    switch (criteria.sortBy) {
+      case 'price_low_to_high':
+        query.orderBy('price', 'asc')
+        break
+      case 'price_high_to_low':
+        query.orderBy('price', 'desc')
+        break
+      case 'rating':
+        query.orderBy('average_rating', 'desc')
+        break
+      case 'newest_first':
+      default:
+        query.orderBy('created_at', 'desc')
+        break
+    }
+  
+    return query
   }
 
-  async list(criteria: ListCriteria): Promise<ApiResponse> {
+  public async list(criteria: ListCriteria): Promise<ApiResponse> {
     try {
       const perPage = Math.abs(criteria.perPage || 10)
       const page = Math.abs(criteria.page || 1)
-
-      const masterListResp = await this.masterList(criteria)
-      if (masterListResp.status === 'failure') {
-        return masterListResp
-      }
-
-      const query = masterListResp.data
+  
+      const query = this.masterList(criteria)
       const paginated = await query.paginate(page, perPage)
       const serialized = paginated.serialize()
-
+  
       const _data = {
         records: serialized.data,
         pagination: {
@@ -85,7 +78,7 @@ export default class ProductService {
           totalCount: serialized.meta.total,
         },
       }
-
+  
       return this.responseService.buildSuccess('Products listed successfully.', _data)
     } catch (error) {
       this.responseService.buildLogger('error', error)

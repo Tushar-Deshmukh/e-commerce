@@ -15,6 +15,7 @@ import Category from "./pages/Dashboard/Category/Category";
 import Product from "./pages/Dashboard/Products/Product";
 import ListProducts from "./pages/Shop/ListProducts";
 import ProductDetails from "./pages/Shop/ProductDetails";
+import Wishlist from "./pages/Dashboard/Wishlist";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
                 <Route path="security" element={<AccountSecurity />} />
                 <Route path="category" element={<Category />} />
                 <Route path="products" element={<Product />} />
+                <Route path="wishlist" element={<Wishlist />} />
               </Route>
             </Route>
           </Route>
