@@ -27,6 +27,7 @@ export const reviewSchema = yup.object().shape({
 });
 
 const AddProductRating = memo(({ productId, setIsProductRatingAdded }) => {
+  
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   const {

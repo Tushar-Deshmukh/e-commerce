@@ -58,9 +58,9 @@ const AccountDetails = () => {
 
       <div className="flex items-center gap-4">
         <h6>{authUser?.email}</h6>
-        <button className="btn btn-outline border border-gray-400 font-normal">
+        <span className="p-2 italic font-semibold text-secondary">
           {authUser?.role === roles.CUSTOMER ? "Member" : "Admin"}
-        </button>
+        </span>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>

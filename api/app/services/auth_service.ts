@@ -19,6 +19,7 @@ import SendEmailOtpNotification from '#mails/send_email_otp_notification'
 import Otp from '#models/otp'
 import { ApiResponse } from '../types/response_interface.js'
 import hash from '@adonisjs/core/services/hash'
+import Token from '#models/token'
 
 @inject()
 export default class AuthService {
@@ -180,18 +181,23 @@ export default class AuthService {
       const user = await User.findBy('email', payload.email)
 
       if (!user) {
-        return this.responseService.buildFailure('Invalid email or password', {
-          respCode: 401,
-        })
+        return this.responseService.buildFailure('Invalid email or password')
       }
 
       if (!user.isVerified) {
-        return this.responseService.buildFailure('Please verify your email OTP to continue', {
-          respCode: 403,
-        })
+        return this.responseService.buildFailure('Please verify your email OTP to continue')
       }
 
       await User.verifyCredentials(payload.email, payload.password)
+
+      //delete the previously created tokens
+      const now = DateTime.utc()
+
+      await Token.query()
+        .where('tokenable_id', user.id)
+        .whereNotNull('expires_at')
+        .where('expires_at', '<=', now.toSQL())
+        .delete()
 
       await user.load('roles')
 
@@ -215,10 +221,7 @@ export default class AuthService {
         token: token.value?.release(),
       })
     } catch (error) {
-      // this.responseService.buildLogger('error', error)
-      return this.responseService.buildFailure('Invalid email or password', {
-        respCode: 401,
-      })
+      return this.responseService.buildFailure('Invalid email or password')
     }
   }
 

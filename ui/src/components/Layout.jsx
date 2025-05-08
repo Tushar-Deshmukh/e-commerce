@@ -23,8 +23,6 @@ const Layout = () => {
   const drawerPositionRef = useRef("left");
   const [drawerKey, setDrawerKey] = useState(0); // To force re-render when content changes
 
-  console.log(cartItems);
-
   const openDrawer = (contentType, position = "left") => {
     drawerContentRef.current = contentType;
     drawerPositionRef.current = position;
@@ -56,22 +54,9 @@ const Layout = () => {
     }
   };
 
-  useEffect(() => {
-    dispatch(fetchCategories());
-  }, []);
-
-  useEffect(() => {
-    const drawerCheckbox = document.getElementById("my-drawer");
-    if (drawerCheckbox) {
-      drawerCheckbox.checked = false;
-    }
-  }, [location]);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchCartItems();
-    }
-  }, [isAuthenticated]);
+  function returnCartTotal(cartItems) {
+    return cartItems.reduce((acc, curr) => acc + (curr.product?.price * curr.quantity), 0);
+  }
 
   async function removeItemFromCart(id) {
     try {
@@ -85,16 +70,22 @@ const Layout = () => {
     }
   }
 
-  function returnCartTotal(cartItems) {
-    const total =
-      cartItems.length > 0
-        ? cartItems.reduce((acc, curr) => {
-            return acc + curr?.price;
-          }, 0)
-        : 0;
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, []);
 
-    return total;
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchCartItems();
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    const drawerCheckbox = document.getElementById("my-drawer");
+    if (drawerCheckbox) {
+      drawerCheckbox.checked = false;
+    }
+  }, [location]);
 
   return (
     <div className="drawer">

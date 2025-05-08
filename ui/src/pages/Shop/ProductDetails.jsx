@@ -56,10 +56,10 @@ const ProductDetails = () => {
       };
 
       const res = await cartService.addToCart(data);
-      console.log("res", res);
-      if(res.status === 'success'){
+
+      if (res.status === "success") {
         toast.success(res.message);
-        dispatch(addToCart(data))
+        dispatch(addToCart({ ...data, product }));
       }
     } catch (error) {
       console.log(error);
@@ -134,7 +134,6 @@ const ProductDetails = () => {
         </div>
 
         <div className="w-full lg:w-1/2 space-y-4">
-
           {summary?.ratings && summary?.ratings.length > 0 && (
             <RatingList ratings={summary?.ratings} />
           )}
