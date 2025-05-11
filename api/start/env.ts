@@ -44,10 +44,21 @@ export default await Env.create(new URL('../', import.meta.url), {
   */
   SMTP_HOST: Env.schema.string(),
   SMTP_PORT: Env.schema.string(),
-  SMTP_USERNAME:Env.schema.string(),
-  SMTP_PASSWORD:Env.schema.string(),
-  SMTP_SECURE:Env.schema.boolean(),
-  MAIL_FROM_ADDRESS:Env.schema.string(),
-  MAIL_FROM_NAME:Env.schema.string(),
+  SMTP_USERNAME: Env.schema.string(),
+  SMTP_PASSWORD: Env.schema.string(),
+  SMTP_SECURE: Env.schema.boolean(),
+  MAIL_FROM_ADDRESS: Env.schema.string(),
+  MAIL_FROM_NAME: Env.schema.string(),
 
+  /*
+  |----------------------------------------------------------
+  | Variables for @vbusatta/adonis-stripe
+  |----------------------------------------------------------
+  */
+  STRIPE_API_KEY: Env.schema.string(),
+  // STRIPE_WEBHOOK: Env.schema.string.optional(),
+  // STRIPE_API_VERSION: Env.schema.string.optional(),
+  STRIPE_SECRET_KEY: Env.schema.string(),
+  STRIPE_PUBLIC_KEY: Env.schema.string(),
+  STRIPE_WEBHOOK_SECRET: Env.schema.string.optional()
 })

@@ -16,6 +16,7 @@ const UploadController = () => import('#controllers/upload_images_controller')
 const RatingsController = () => import('#controllers/ratings_controller')
 const WishlistController = () => import('#controllers/wishlists_controller')
 const CartController = () => import('#controllers/carts_controller')
+const StripeController = () => import('#controllers/payments_controller')
 
 router.get('/', async () => {
   return {
@@ -93,4 +94,9 @@ router
       router.delete('/:id', [CartController, 'removeFromCart'])
   })
   .prefix('/cart')
+  .middleware([middleware.auth()])
+
+//payment
+router
+  .post('/create-payment-intent', [StripeController, 'createPaymentIntent'])
   .middleware([middleware.auth()])

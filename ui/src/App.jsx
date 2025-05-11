@@ -16,6 +16,8 @@ import Product from "./pages/Dashboard/Products/Product";
 import ListProducts from "./pages/Shop/ListProducts";
 import ProductDetails from "./pages/Shop/ProductDetails";
 import Wishlist from "./pages/Dashboard/Wishlist";
+import Cancel from "./pages/Payment/Cancel";
+import Success from "./pages/Payment/Success";
 
 function App() {
   return (
@@ -30,9 +32,10 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/verify-otp" element={<VerifyOtp />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-
             <Route path="/shop" element={<ListProducts />} />
             <Route path="/shop/:id" element={<ProductDetails />} />
+            <Route path="/cancel" element={<Cancel />} />
+            <Route path="/success" element={<Success />} />
 
             {/* protected routes */}
             <Route path="/dashboard" element={<AuthGuard />}>
