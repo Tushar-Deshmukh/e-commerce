@@ -148,4 +148,18 @@ export default class AuthController {
       )
     }
   }
+
+  public async profile({response, auth }: HttpContext) {
+    try {
+      const userId = auth.user!.id
+      const result = await this.authService.getUserProfile(userId)
+      return this.responseService.sendResponse(response, result)
+    } catch (error) {
+      this.responseService.buildLogger('error', error)
+      return this.responseService.sendResponse(
+        response,
+        this.responseService.buildFailure('Something went wrong while fetching user profile.')
+      )
+    }
+  }
 }

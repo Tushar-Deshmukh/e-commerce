@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { fetchCategories, getCategories } from "../store/slices/categorySlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -14,6 +14,7 @@ import { RiDeleteBin5Fill } from "react-icons/ri";
 import toast from "react-hot-toast";
 
 const Layout = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const categories = useSelector(getCategories);
@@ -220,7 +221,7 @@ const Layout = () => {
                     >
                       Continue Shopping
                     </button>
-                    <button className="btn btn-primary btn-outline">
+                    <button className="btn btn-primary btn-outline" onClick={() => navigate('/checkout')}>
                       Proceed To Checkout
                     </button>
                   </div>

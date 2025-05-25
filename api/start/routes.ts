@@ -17,6 +17,7 @@ const RatingsController = () => import('#controllers/ratings_controller')
 const WishlistController = () => import('#controllers/wishlists_controller')
 const CartController = () => import('#controllers/carts_controller')
 const StripeController = () => import('#controllers/payments_controller')
+const addressController = () => import('#controllers/address_controller')
 
 router.get('/', async () => {
   return {
@@ -33,6 +34,19 @@ router.post('/verify-otp', [AuthController, 'verify'])
 router.post('/logout', [AuthController, 'logout']).use([middleware.auth()])
 router.put('/update-user/:id', [AuthController, 'updateUser']).use([middleware.auth()])
 router.put('/change-password', [AuthController, 'changePassword']).use([middleware.auth()])
+router.get('/profile', [AuthController, 'profile']).use([middleware.auth()])
+
+//address
+router
+  .group(() => {
+    router.post('/', [addressController, 'store'])
+    router.get('/', [addressController, 'index'])
+    router.get('/:id', [addressController, 'getAddress'])
+    router.put('/:id', [addressController, 'update'])
+    router.delete('/:id', [addressController, 'destroy'])
+  })
+  .prefix('/address')
+  .use([middleware.auth()])
 
 //categories
 router.get('/categories', [CategoriesController, 'index']).prefix('/admin/category')

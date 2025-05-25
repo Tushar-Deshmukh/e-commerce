@@ -1,6 +1,6 @@
 import axios from "axios";
 import { store } from "./store";
-import storage from 'redux-persist/lib/storage'
+import storage from "redux-persist/lib/storage";
 
 const instance = axios.create({
   headers: {
@@ -23,7 +23,7 @@ instance.interceptors.request.use(
     return config;
   },
   (err) => {
-    console.log('error',err)
+    console.log("error", err);
     Promise.reject(err);
   }
 );
@@ -34,15 +34,14 @@ instance.interceptors.response.use(
   async (error) => {
     if (error.response && error.response.status === 401) {
       // Clear persisted storage (localStorage)
-      await storage.removeItem('persist:root')
+      // await storage.removeItem("persist:root");
 
       // Dispatch sign out
-      store.dispatch(setSignOut())
-
+      // store.dispatch(setSignOut());
     }
 
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
-)
+);
 
 export default instance;

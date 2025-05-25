@@ -5,8 +5,8 @@ import * as yup from "yup";
 import axios from "../../axios";
 import { ApiConfig } from "../../config/ApiConfig";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
-import { getAuthUser } from "../../store/slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { getAuthUser, setSignIn } from "../../store/slices/authSlice";
 
 const accountDetailsSchema = yup.object().shape({
   first_name: yup.string().required("First name is required"),
@@ -19,6 +19,7 @@ const accountDetailsSchema = yup.object().shape({
 
 const AccountDetails = () => {
   const authUser = useSelector(getAuthUser);
+  const dispatch = useDispatch();
 
   const {
     register,
@@ -43,6 +44,7 @@ const AccountDetails = () => {
 
       if (res?.data?.status === "success") {
         toast.success(res?.data?.message);
+        dispatch(setSignIn(res?.data?.data));
       }
     } catch (error) {
       console.error(error);

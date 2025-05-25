@@ -232,6 +232,25 @@ export default class AuthService {
       user.merge(payload)
       await user.save()
 
+      await user.load('roles')
+      const roles = user.roles.map((role) => role.slug)
+      const userRole = roles.join(', ')
+
+      //delete the previously created tokens
+      const now = DateTime.utc()
+
+      await Token.query()
+        .where('tokenable_id', user.id)
+        .whereNotNull('expires_at')
+        .where('expires_at', '<=', now.toSQL())
+        .delete()
+
+      // Create a new access token
+      const token = await User.accessTokens.create(user, ['*'], {
+        name: 'API Token',
+        expiresIn: '1 hour',
+      })
+
       const { id, first_name, last_name, email, phone_number, isVerified } = user
 
       return this.responseService.buildSuccess('User updated successfully!', {
@@ -241,6 +260,8 @@ export default class AuthService {
         email,
         phone_number,
         isVerified,
+        role: userRole,
+        token: token.value?.release(),
       })
     } catch (error) {
       this.responseService.buildLogger('error', error)
@@ -279,6 +300,20 @@ export default class AuthService {
         'Something went wrong while updating the password. Please try again later.',
         { respCode: 500 }
       )
+    }
+  }
+
+  public async getUserProfile(userId: number): Promise<ApiResponse> {
+    try {
+      const user = await User.query().where('id', userId).preload('address').first()
+      if (!user) {
+        return this.responseService.buildFailure('User Not found!.')
+      }
+
+      return this.responseService.buildSuccess('User details fetched successfully!', user)
+    } catch (error) {
+      this.responseService.buildLogger('error', error)
+      return this.responseService.buildFailure('Error fetching user details')
     }
   }
 }

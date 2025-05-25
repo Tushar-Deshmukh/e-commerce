@@ -10,6 +10,7 @@ import Token from './token.js'
 import ProductRating from './product_rating.js'
 import Wishlist from './wishlist.js'
 import CartItem from './cart_item.js'
+import Address from './address.js'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -71,4 +72,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @hasMany(() => CartItem)
   declare cartItems: HasMany<typeof CartItem>
+
+  @hasMany(() => Address)
+  declare address:HasMany<typeof Address >
 }

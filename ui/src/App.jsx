@@ -18,6 +18,8 @@ import ProductDetails from "./pages/Shop/ProductDetails";
 import Wishlist from "./pages/Dashboard/Wishlist";
 import Cancel from "./pages/Payment/Cancel";
 import Success from "./pages/Payment/Success";
+import Checkout from "./pages/Checkout/Index";
+import Address from "./pages/Dashboard/Address/Address";
 
 function App() {
   return (
@@ -36,11 +38,13 @@ function App() {
             <Route path="/shop/:id" element={<ProductDetails />} />
             <Route path="/cancel" element={<Cancel />} />
             <Route path="/success" element={<Success />} />
+            <Route path="/checkout" element={<Checkout />} />
 
             {/* protected routes */}
             <Route path="/dashboard" element={<AuthGuard />}>
               <Route element={<DashboardLayout />}>
                 <Route index element={<AccountDetails />} />
+                <Route path="address" element={<Address />} />
                 <Route path="security" element={<AccountSecurity />} />
                 <Route path="category" element={<Category />} />
                 <Route path="products" element={<Product />} />

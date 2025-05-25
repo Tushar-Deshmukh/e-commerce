@@ -11,13 +11,21 @@ export const ApiConfig = {
   logout: `${BASE_URL}/logout`,
   updateUser: `${BASE_URL}/update-user`,
   changePassword: `${BASE_URL}/change-password`,
+  profile: `${BASE_URL}/profile`,
+
+  //address
+  addAddress: `${BASE_URL}/address`,
+  getAddress: `${BASE_URL}/address`,
+  getAddressById: `${BASE_URL}/address`,
+  updateAddress: `${BASE_URL}/address`,
+  deleteAddressById:`${BASE_URL}/address`,
 
   //category
   createCategory: `${CATEGORY_URL}/create-category`,
   getAllCatgories: `${CATEGORY_URL}/categories`,
   getCategoryById: `${CATEGORY_URL}/show-category`,
-  updateCategory:`${CATEGORY_URL}/update-category`,
-  deleteCategory:`${CATEGORY_URL}/delete-category`,
+  updateCategory: `${CATEGORY_URL}/update-category`,
+  deleteCategory: `${CATEGORY_URL}/delete-category`,
 
   //product
   addProduct: `${PRODUCT_URL}/create-product`,
@@ -27,20 +35,22 @@ export const ApiConfig = {
   deleteProduct: `${PRODUCT_URL}/delete-product`,
 
   //ratings
-  addRating:`${BASE_URL}/ratings/create-rating`,
-  ratingByProduct:`${BASE_URL}/ratings/product`,
+  addRating: `${BASE_URL}/ratings/create-rating`,
+  ratingByProduct: `${BASE_URL}/ratings/product`,
 
   //wishlist
-  wishlistedProducts:`${BASE_URL}/wishlist/wishlisted-products`, 
-  toggleWishlist:`${BASE_URL}/wishlist/add-to-wishlist`, 
-  mywishlist:`${BASE_URL}/wishlist/my-wishlist`,
-  removeFromWishlist:`${BASE_URL}/wishlist/remove-from-wishlist`,  
-
+  wishlistedProducts: `${BASE_URL}/wishlist/wishlisted-products`,
+  toggleWishlist: `${BASE_URL}/wishlist/add-to-wishlist`,
+  mywishlist: `${BASE_URL}/wishlist/my-wishlist`,
+  removeFromWishlist: `${BASE_URL}/wishlist/remove-from-wishlist`,
 
   //cart
-  addToCart:`${BASE_URL}/cart`,
-  getCartItems:`${BASE_URL}/cart`,
-  removeFromCart:`${BASE_URL}/cart`,
+  addToCart: `${BASE_URL}/cart`,
+  getCartItems: `${BASE_URL}/cart`,
+  removeFromCart: `${BASE_URL}/cart`,
+
+  //payment
+  createPayment:`${BASE_URL}/create-payment-intent`,
 
   //upload-image
   uploadImage: `${BASE_URL}/upload/image`,

@@ -9,21 +9,23 @@ export default class PaymentsController {
 
   public async createPaymentIntent({ request, response, auth }: HttpContext) {
     try {
-      const { amount, products } = request.only(['amount', 'products'])
+      const { amount, cart } = request.only(['amount', 'cart'])
 
       const userId = auth.user!.id
 
-       // Validate inputs
-      if (!amount || !products || !Array.isArray(products)) {
+      // Validate inputs
+      if (!amount || !cart || !Array.isArray(cart)) {
         return response.status(400).json({
-          error: 'Invalid input: amount and products (array) are required',
+          error: 'Invalid input: amount and cart (array) are required',
         })
       }
 
-      // Convert metadata values to strings because it is need for the stripe, later we can access these values in the webook.
+      // Convert metadata values to strings because it is needed for the stripe, later we can access these values in the webook.
+      const cartIds = cart.map((cart) => cart.id)
+
       const metadata = {
         userId: String(userId),
-        products: JSON.stringify(products), 
+        cartIds: JSON.stringify(cartIds),
       }
 
       const stripeInstace = stripe.api
@@ -45,7 +47,7 @@ export default class PaymentsController {
         mode: 'payment',
         success_url: `${request.headers().origin || 'http://localhost:5173'}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${request.headers().origin || 'http://localhost:5173'}/cancel`,
-        metadata
+        metadata,
       })
 
       return this.responseServie.sendResponse(
