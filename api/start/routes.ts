@@ -9,6 +9,7 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
+
 const AuthController = () => import('#controllers/auth_controller')
 const CategoriesController = () => import('#controllers/categories_controller')
 const ProductsController = () => import('#controllers/products_controller')
@@ -18,6 +19,7 @@ const WishlistController = () => import('#controllers/wishlists_controller')
 const CartController = () => import('#controllers/carts_controller')
 const StripeController = () => import('#controllers/payments_controller')
 const addressController = () => import('#controllers/address_controller')
+const razorpayController = () => import('#controllers/razorpay_controller')
 
 router.get('/', async () => {
   return {
@@ -113,4 +115,13 @@ router
 //payment
 router
   .post('/create-payment-intent', [StripeController, 'createPaymentIntent'])
-  .middleware([middleware.auth()])
+  .use([middleware.auth()])
+
+router.post('/stripe/webhook', [StripeController, 'stripe'])
+
+//razorpay
+router
+  .post('/create-payment-link', [razorpayController, 'createPaymentLink'])
+  .use([middleware.auth()])
+
+router.post('/webhook', [razorpayController, 'webhook'])

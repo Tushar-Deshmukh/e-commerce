@@ -56,9 +56,16 @@ export default await Env.create(new URL('../', import.meta.url), {
   |----------------------------------------------------------
   */
   STRIPE_API_KEY: Env.schema.string(),
-  // STRIPE_WEBHOOK: Env.schema.string.optional(),
-  // STRIPE_API_VERSION: Env.schema.string.optional(),
-  STRIPE_SECRET_KEY: Env.schema.string(),
-  STRIPE_PUBLIC_KEY: Env.schema.string(),
-  STRIPE_WEBHOOK_SECRET: Env.schema.string.optional()
+  STRIPE_WEBHOOK_SECRET: Env.schema.string(),
+  APP_URL: Env.schema.string(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for razorpay
+  |----------------------------------------------------------
+  */
+  key_id: Env.schema.string(),
+  key_secret: Env.schema.string(),
+  RAZORPAY_WEBHOOK_SECRET:Env.schema.string(),
+
 })
