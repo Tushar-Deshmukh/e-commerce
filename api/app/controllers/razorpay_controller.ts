@@ -2,62 +2,75 @@ import { HttpContext } from '@adonisjs/core/http'
 import RazorpayService from '#services/razorpay_service'
 import env from '#start/env'
 import crypto from 'crypto'
+import ResponseService from '#services/response_service'
+import OrderService from '#services/order_service'
 
 export default class RazorpayController {
   private razorpayService = new RazorpayService()
+  private responseService = new ResponseService()
+  private orderService = new OrderService(this.responseService)
 
-  public async createPaymentLink({ request, response,auth }: HttpContext) {
+  public async createPaymentLink({ request, response, auth }: HttpContext) {
     try {
-      const { amount,cart } = request.only(['amount','cart']);
+      const { amount, cart } = request.only(['amount', 'cart'])
       const userId = auth.user!.id
 
-      const result = await this.razorpayService.createPaymentLink(amount)
+      if (!amount || !cart) {
+        return this.responseService.sendResponse(
+          response,
+          this.responseService.buildFailure('Amount or Cart is missing'),
+          { overrideHttpCode: 404 }
+        )
+      }
 
-      return response.json({
-        success: true,
-        url: result?.short_url,
-      })
+      const result = await this.razorpayService.createPaymentLink(amount, userId, cart)
+
+      return this.responseService.sendResponse(response, result!)
     } catch (error) {
-      return response.status(500).json({
-        success: false,
-        message: 'Failed to create order',
-        error: error.message,
-      })
+      this.responseService.buildFailure('failed to create order:', error)
+      return this.responseService.sendResponse(
+        response,
+        this.responseService.buildFailure('failed to create order', error)
+      )
     }
   }
 
   public async webhook({ request, response }: HttpContext) {
-   
-    const rawbody = request.raw()!
-    // ✅ Signature verification
-    const razorpaySignature = request.header('x-razorpay-signature')
-    const secret = env.get('RAZORPAY_WEBHOOK_SECRET')
+    try {
+      const rawbody = request.raw()!
 
-    const expectedSignature = crypto.createHmac('sha256', secret).update(rawbody).digest('hex')
+      // ✅ Signature verification
+      const razorpaySignature = request.header('x-razorpay-signature')
+      const secret = env.get('RAZORPAY_WEBHOOK_SECRET')
 
-    console.log(
-      'expected signature and razorpaysignature',
-      `${expectedSignature} : ${razorpaySignature}`
-    )
+      const expectedSignature = crypto.createHmac('sha256', secret).update(rawbody).digest('hex')
 
-    if (expectedSignature !== razorpaySignature) {
-      console.warn('❌ Invalid webhook signature')
-      return response.unauthorized('Invalid signature')
+      if (expectedSignature !== razorpaySignature) {
+        console.warn('❌ Invalid webhook signature')
+        return response.unauthorized('Invalid signature')
+      }
+
+      // ✅ Now safely parse and use body
+      const body = JSON.parse(rawbody)
+
+      if (body.event === 'payment_link.paid') {
+        const paymentLink = body.payload.payment_link.entity
+        const notes = paymentLink.notes || {}
+
+        const userId = notes.userId
+        const cartIds = notes.cartIds
+        const amount = paymentLink.amount / 100
+
+        const result = await this.orderService.createOrder({ userId, cartIds, amount })
+
+        return this.responseService.sendResponse(response, result)
+      }
+    } catch (error) {
+      return this.responseService.sendResponse(
+        response,
+        this.responseService.buildFailure('error from webhook', error),
+        { overrideHttpCode: 500 }
+      )
     }
-
-    // ✅ Now safely parse and use body
-    const body = JSON.parse(rawbody)
-    console.log('Parsed body:', body.payload)
-
-    if (body.event === 'payment_link.paid') {
-      const paymentLink = body.payload.payment_link.entity
-      const paymentId = paymentLink.payment_id
-
-      console.log('✅ Payment verified from webhook:', paymentId)
-
-      // await OrderService.create(...)
-    }
-
-    return response.ok({})
   }
 }

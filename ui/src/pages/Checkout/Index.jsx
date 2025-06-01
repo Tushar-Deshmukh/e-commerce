@@ -46,14 +46,14 @@ const CheckoutPage = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post(ApiConfig.createPayment, {
+      const res = await axios.post(ApiConfig.createPaymentLink, {
         amount: total,
         cart: cartItems,
       });
       console.log("res", res);
       if (res?.data?.status === "success") {
         setLoading(false);
-        window.location.href = res?.data?.data;
+        window.location.href = res?.data?.data?.url;
       }
     } catch (error) {
       setLoading(false);

@@ -50,8 +50,12 @@ export const ApiConfig = {
   removeFromCart: `${BASE_URL}/cart`,
 
   //payment
-  createPayment:`${BASE_URL}/create-payment-intent`,
+  createPaymentLink:`${BASE_URL}/create-payment-link`,
 
   //upload-image
   uploadImage: `${BASE_URL}/upload/image`,
+
+  //order
+  getUserOrders:`${BASE_URL}/orders`,
+  deleteOrder:`${BASE_URL}/delete-orders`
 };

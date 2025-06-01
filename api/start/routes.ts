@@ -20,6 +20,7 @@ const CartController = () => import('#controllers/carts_controller')
 const StripeController = () => import('#controllers/payments_controller')
 const addressController = () => import('#controllers/address_controller')
 const razorpayController = () => import('#controllers/razorpay_controller')
+const OrderController = () => import('#controllers/order_controller')
 
 router.get('/', async () => {
   return {
@@ -125,3 +126,9 @@ router
   .use([middleware.auth()])
 
 router.post('/webhook', [razorpayController, 'webhook'])
+
+//orders
+router.get('/orders', [OrderController, 'getUserOrders']).use([middleware.auth()])
+router
+  .delete('/delete-orders/:orderId', [OrderController, 'deleteUserOrders'])
+  .use([middleware.auth()])

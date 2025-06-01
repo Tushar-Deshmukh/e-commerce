@@ -20,6 +20,8 @@ import Cancel from "./pages/Payment/Cancel";
 import Success from "./pages/Payment/Success";
 import Checkout from "./pages/Checkout/Index";
 import Address from "./pages/Dashboard/Address/Address";
+import MyOrder from "./pages/Order/MyOrder";
+import Support from "./pages/Support/Index";
 
 function App() {
   return (
@@ -49,6 +51,8 @@ function App() {
                 <Route path="category" element={<Category />} />
                 <Route path="products" element={<Product />} />
                 <Route path="wishlist" element={<Wishlist />} />
+                <Route path="orders" element={<MyOrder />} />
+                <Route path="support" element={<Support />} />
               </Route>
             </Route>
           </Route>
