@@ -51,6 +51,7 @@
     "typescript": "~5.7"
   },
   "dependencies": {
+    "@adonisjs/ally": "^5.1.0",
     "@adonisjs/auth": "^9.3.1",
     "@adonisjs/core": "^6.17.2",
     "@adonisjs/cors": "^2.2.1",
@@ -62,6 +63,7 @@
     "luxon": "^3.6.1",
     "mysql2": "^3.14.0",
     "razorpay": "^2.9.6",
+    "react-icons": "^5.5.0",
     "reflect-metadata": "^0.2.2",
     "stripe": "^18.1.1"
   },

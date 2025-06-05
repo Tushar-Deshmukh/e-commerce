@@ -132,3 +132,8 @@ router.get('/orders', [OrderController, 'getUserOrders']).use([middleware.auth()
 router
   .delete('/delete-orders/:orderId', [OrderController, 'deleteUserOrders'])
   .use([middleware.auth()])
+
+//google auth
+
+router.get("/login/OAuth",[AuthController,'socialAuth'])
+router.get("/callback",[AuthController,'callback'])

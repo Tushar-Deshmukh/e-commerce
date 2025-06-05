@@ -12,6 +12,7 @@ export const ApiConfig = {
   updateUser: `${BASE_URL}/update-user`,
   changePassword: `${BASE_URL}/change-password`,
   profile: `${BASE_URL}/profile`,
+  OAuth:`${BASE_URL}/login/OAuth`,
 
   //address
   addAddress: `${BASE_URL}/address`,

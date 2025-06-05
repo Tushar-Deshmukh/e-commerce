@@ -22,6 +22,7 @@ import Checkout from "./pages/Checkout/Index";
 import Address from "./pages/Dashboard/Address/Address";
 import MyOrder from "./pages/Order/MyOrder";
 import Support from "./pages/Support/Index";
+import OAuthCallback from "./pages/Auth/OAuthCallback";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/oauth/callback" element={<OAuthCallback />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/verify-otp" element={<VerifyOtp />} />

@@ -12,6 +12,9 @@ import {
 import { forgotPasswordValidator } from '#validators/user'
 import { verifyOtpValidator } from '#validators/verify_otp'
 import User from '#models/user'
+import Role from '#models/role'
+import Token from '#models/token'
+import { DateTime } from 'luxon'
 
 @inject()
 export default class AuthController {
@@ -149,7 +152,7 @@ export default class AuthController {
     }
   }
 
-  public async profile({response, auth }: HttpContext) {
+  public async profile({ response, auth }: HttpContext) {
     try {
       const userId = auth.user!.id
       const result = await this.authService.getUserProfile(userId)
@@ -160,6 +163,67 @@ export default class AuthController {
         response,
         this.responseService.buildFailure('Something went wrong while fetching user profile.')
       )
+    }
+  }
+
+  public async socialAuth({ ally }: HttpContext) {
+    try {
+      return ally.use('google').redirect()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  public async callback({ ally, response }: HttpContext) {
+    try {
+      const google = ally.use('google')
+
+      if (google.accessDenied())
+        return response.redirect('http://localhost:5173/login?error=access_denied')
+      if (google.stateMisMatch()) return response.redirect('http://localhost:5173/login?error=csrf')
+      if (google.hasError())
+        return response.redirect(`http://localhost:5173/login?error=${google.getError()}`)
+
+      const googleUser = await google.user()
+
+      const existingUser = await User.findBy('email', googleUser.email)
+      let user = existingUser
+
+      if (!user) {
+        user = await User.create({
+          email: googleUser.email,
+          first_name: googleUser.original.given_name,
+          last_name: googleUser.original.family_name,
+          password: '',
+          isVerified: true,
+        })
+
+        const defaultRole = await Role.findByOrFail('slug', 'customer')
+        await user.related('roles').attach([defaultRole.id])
+      }
+
+      const now = DateTime.utc()
+      await Token.query()
+        .where('tokenable_id', user.id)
+        .whereNotNull('expires_at')
+        .where('expires_at', '<=', now.toSQL())
+        .delete()
+
+      await user.load('roles')
+      const roles = user.roles.map((role) => role.slug).join(',')
+
+      const token = await User.accessTokens.create(user, ['*'], {
+        name: 'OAuth Token',
+        expiresIn: '1h',
+      })
+
+      // ⬇️ REDIRECT to frontend with token + user info
+      const redirectUrl = `http://localhost:5173/oauth/callback?token=${token.value?.release()}&first_name=${user.first_name}&last_name=${user.last_name}&email=${user.email}&role=${roles}`
+
+      return response.redirect(redirectUrl)
+    } catch (error) {
+      console.error('OAuth login error:', error)
+      return response.redirect('http://localhost:5173/login?error=oauth_failed')
     }
   }
 }

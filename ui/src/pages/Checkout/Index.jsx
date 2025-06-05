@@ -92,7 +92,7 @@ const CheckoutPage = () => {
                 <p className="text-base-content mb-4">No address found.</p>
                 <button
                   className="btn btn-primary"
-                  onClick={() => navigate("/add-address")}
+                  onClick={() => navigate("/dashboard/address")}
                 >
                   Add Address
                 </button>

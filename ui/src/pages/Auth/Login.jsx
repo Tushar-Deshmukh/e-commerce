@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setSignIn } from "../../store/slices/authSlice";
+import { FcGoogle } from "react-icons/fc";
 
 const loginSchema = yup.object().shape({
   email: yup
@@ -42,14 +43,18 @@ const Login = () => {
       }
     } catch (error) {
       console.log(error);
-      if(error?.status === 401){
-        toast.error(error?.response?.data?.message)
+      if (error?.status === 401) {
+        toast.error(error?.response?.data?.message);
       }
 
-      if(error?.status === 422){
-        toast.error(error?.response?.data?.message)
+      if (error?.status === 422) {
+        toast.error(error?.response?.data?.message);
       }
     }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:3333/login/OAuth";
   };
 
   return (
@@ -57,39 +62,55 @@ const Login = () => {
       <h3 className="text-xl">Login</h3>
       <hr className="my-4 text-gray-400" />
       <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <div className="w-full flex flex-col">
+              <label htmlFor="email" className="font-light mb-2">
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                placeholder="Please Enter Your Email"
+                className="input focus:outline-0 rounded-none w-full  py-6"
+                {...register("email")}
+              />
+              {errors.email && (
+                <span className="text-sm text-red-500">
+                  {errors.email.message}
+                </span>
+              )}
+            </div>
 
-        <div className="flex flex-col">
-          <label htmlFor="email" className="font-light mb-2">
-            Email Address
-          </label>
-          <input
-            id="email"
-            type="email"
-            placeholder="Please Enter Your Email"
-            className="input focus:outline-0 rounded-none w-full lg:w-1/2 py-6"
-            {...register("email")}
-          />
-          {errors.email && (
-            <span className="text-sm text-red-500">{errors.email.message}</span>
-          )}
-        </div>
+            <div className="flex flex-col mt-2">
+              <label htmlFor="password" className="font-light mb-2">
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                placeholder="Please Enter Your Password"
+                className="input focus:outline-0 rounded-none w-full  py-6"
+                {...register("password")}
+              />
+              {errors.password && (
+                <span className="text-sm text-red-500">
+                  {errors.password.message}
+                </span>
+              )}
+            </div>
+          </div>
 
-        <div className="flex flex-col mt-2">
-          <label htmlFor="password" className="font-light mb-2">
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            placeholder="Please Enter Your Password"
-            className="input focus:outline-0 rounded-none w-full lg:w-1/2 py-6"
-            {...register("password")}
-          />
-          {errors.password && (
-            <span className="text-sm text-red-500">
-              {errors.password.message}
-            </span>
-          )}
+          <div className="flex justify-center items-center">
+            <button
+              onClick={handleGoogleLogin}
+              type="button"
+              className="btn w-full md:w-1/2 border border-gray-300 bg-white hover:bg-gray-100 text-sm font-medium text-gray-700 gap-2"
+            >
+              <FcGoogle className="text-xl" />
+              Continue with Google
+            </button>
+          </div>
         </div>
 
         <hr className="my-4 text-gray-400" />
